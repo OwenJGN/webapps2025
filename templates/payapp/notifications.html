@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Notifications - PayApp{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="card-title mb-0">Your Notifications</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Payment Requests Received -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h3 class="card-title mb-0">
+                    Payment Requests Received
+                    {% if received_requests.count > 0 %}
+                    <span class="badge bg-primary float-end">{{ received_requests.count }}</span>
+                    {% endif %}
+                </h3>
+            </div>
+            <div class="card-body">
+                {% if received_requests %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>From</th>
+                                <th>Amount</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in received_requests %}
+                            <tr class="{% if request.status == 'pending' %}table-warning{% elif request.status == 'accepted' %}table-success{% elif request.status == 'rejected' %}table-danger{% endif %}">
+                                <td>{{ request.created_at|date:"M d, Y" }}</td>
+                                <td>{{ request.requester.username }}</td>
+                                <td>{{ request.get_amount_display }}</td>
+                                <td>
+                                    {% if request.description %}
+                                    {{ request.description }}
+                                    {% else %}
+                                    <span class="text-muted">No description</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge {% if request.status == 'pending' %}bg-warning{% elif request.status == 'accepted' %}bg-success{% elif request.status == 'rejected' %}bg-danger{% endif %}">
+                                        {{ request.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if request.status == 'pending' %}
+                                    <a href="{% url 'respond_to_request' request.id %}" class="btn btn-sm btn-primary">Respond</a>
+                                    {% else %}
+                                    <button class="btn btn-sm btn-secondary" disabled>Completed</button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <p class="mb-0">You haven't received any payment requests.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Payment Requests Sent -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h3 class="card-title mb-0">
+                    Payment Requests Sent
+                    {% if sent_requests.count > 0 %}
+                    <span class="badge bg-primary float-end">{{ sent_requests.count }}</span>
+                    {% endif %}
+                </h3>
+            </div>
+            <div class="card-body">
+                {% if sent_requests %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>To</th>
+                                <th>Amount</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in sent_requests %}
+                            <tr class="{% if request.status == 'pending' %}table-warning{% elif request.status == 'accepted' %}table-success{% elif request.status == 'rejected' %}table-danger{% endif %}">
+                                <td>{{ request.created_at|date:"M d, Y" }}</td>
+                                <td>{{ request.requestee.username }}</td>
+                                <td>{{ request.get_amount_display }}</td>
+                                <td>
+                                    {% if request.description %}
+                                    {{ request.description }}
+                                    {% else %}
+                                    <span class="text-muted">No description</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge {% if request.status == 'pending' %}bg-warning{% elif request.status == 'accepted' %}bg-success{% elif request.status == 'rejected' %}bg-danger{% endif %}">
+                                        {{ request.get_status_display }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <p class="mb-0">You haven't sent any payment requests.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

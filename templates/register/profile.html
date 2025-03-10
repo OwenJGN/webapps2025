@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Profile - PayApp{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="card-title mb-0">Your Profile</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Account Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Username:</strong> {{ user.username }}</p>
+                                <p><strong>Email:</strong> {{ user.email }}</p>
+                                <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+                                <p><strong>Currency:</strong> {{ user_profile.get_currency_display }}</p>
+                                <p><strong>Current Balance:</strong> {{ user_profile.get_formatted_balance }}</p>
+                                <p><strong>Account Created:</strong> {{ user_profile.created_at|date:"F d, Y" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <fieldset class="mb-4">
+                                <legend class="border-bottom mb-4">Update Your Profile</legend>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-4">
+                                            <h5>Account Details</h5>
+                                            {{ user_form|crispy }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <h5>Currency Preference</h5>
+                                            <div class="alert alert-warning">
+                                                <small>
+                                                    <strong>Note:</strong> Changing your currency will convert your current balance
+                                                    to the new currency using the current exchange rate.
+                                                </small>
+                                            </div>
+                                            {{ profile_form|crispy }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <div class="form-group">
+                                <button class="btn btn-primary" type="submit">Update Profile</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

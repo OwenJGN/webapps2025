@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Register - PayApp{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="card-title mb-0">Register an Account</h2>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    <fieldset class="mb-4">
+                        <legend class="border-bottom mb-4">Join PayApp Today</legend>
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ user_form|crispy }}
+                            </div>
+                            <div class="col-md-6">
+                                <div class="alert alert-info">
+                                    <h4 class="alert-heading">Select Your Currency</h4>
+                                    <p>
+                                        All new accounts start with the equivalent of £750 in your chosen currency.
+                                        Currency conversion rates will be applied automatically.
+                                    </p>
+                                </div>
+                                {{ profile_form|crispy }}
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div class="form-group">
+                        <button class="btn btn-primary" type="submit">Register</button>
+                    </div>
+                </form>
+                <div class="border-top pt-3">
+                    <small class="text-muted">
+                        Already Have An Account? <a class="ml-2" href="{% url 'login' %}">Sign In</a>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

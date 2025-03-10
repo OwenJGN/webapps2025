@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Send Money - PayApp{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="card-title mb-0">Send Money</h2>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="alert alert-info">
+                            <h5 class="alert-heading">Current Balance</h5>
+                            <p class="mb-0 display-6">{{ user.profile.get_formatted_balance }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="alert alert-light border">
+                            <h5 class="alert-heading">Your Currency</h5>
+                            <p class="mb-0">{{ user.profile.get_currency_display }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <fieldset class="mb-4">
+                        <legend class="border-bottom mb-4">Payment Details</legend>
+                        {{ form|crispy }}
+                    </fieldset>
+                    <div class="form-group">
+                        <button class="btn btn-primary" type="submit">Send Payment</button>
+                        <a class="btn btn-outline-secondary" href="{% url 'dashboard' %}">Cancel</a>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer bg-light">
+                <div class="text-muted">
+                    <p class="mb-0"><strong>Note:</strong> Payments are processed instantly. Currency conversion will be applied automatically if the recipient uses a different currency.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Register Admin - PayApp{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="card-title mb-0">Register New Administrator</h2>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning mb-4">
+                    <h5 class="alert-heading">Admin Registration</h5>
+                    <p class="mb-0">
+                        You are creating a new administrator account. This user will have full access to the admin panel
+                        and all user data. Please use this privilege responsibly.
+                    </p>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <fieldset class="mb-4">
+                        <legend class="border-bottom mb-4">Admin Account Details</legend>
+                        {{ form|crispy }}
+                    </fieldset>
+                    <div class="form-group">
+                        <button class="btn btn-primary" type="submit">Register Admin</button>
+                        <a class="btn btn-outline-secondary" href="{% url 'admin_users' %}">Cancel</a>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer bg-light">
+                <div class="text-muted">
+                    <p class="mb-0"><strong>Note:</strong> New admin accounts will start with the same initial balance as regular users.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
