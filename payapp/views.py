@@ -170,7 +170,7 @@ def notifications(request):
 
 
 @login_required
-def respond_to_request(request, request_id, transaction=None):
+def respond_to_request(request, request_id):
     """
     Handle responding to a payment request
     """
@@ -216,7 +216,7 @@ def respond_to_request(request, request_id, transaction=None):
                     requester.profile.save()
 
                     # Create transaction record
-                    transaction = Transaction.objects.create(
+                    transaction_obj = Transaction.objects.create(
                         sender=requestee,
                         receiver=requester,
                         amount_sender_currency=amount_requestee_currency,

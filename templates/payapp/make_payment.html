@@ -13,14 +13,14 @@
             <div class="card-body">
                 <div class="row mb-4">
                     <div class="col-md-6">
-                        <div class="alert alert-info">
-                            <h5 class="alert-heading">Current Balance</h5>
+                        <div class="info-card alert-permanent">
+                            <h5 class="info-card-heading">Current Balance</h5>
                             <p class="mb-0 display-6">{{ user.profile.get_formatted_balance }}</p>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="alert alert-light border">
-                            <h5 class="alert-heading">Your Currency</h5>
+                        <div class="info-card alert-permanent">
+                            <h5 class="info-card-heading">Your Currency</h5>
                             <p class="mb-0">{{ user.profile.get_currency_display }}</p>
                         </div>
                     </div>

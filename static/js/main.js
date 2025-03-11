@@ -1,12 +1,19 @@
 // Main JavaScript file for PayApp
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Add a timeout for alert messages to automatically dismiss
-    const alerts = document.querySelectorAll('.alert:not(.alert-permanent)');
-    alerts.forEach(function(alert) {
+    // Only auto-dismiss notification alerts, not information alerts
+    const temporaryAlerts = document.querySelectorAll('.alert.alert-success, .alert.alert-danger, .alert.alert-warning:not(.alert-permanent)');
+    temporaryAlerts.forEach(function(alert) {
         setTimeout(function() {
-            const bsAlert = new bootstrap.Alert(alert);
-            bsAlert.close();
+            try {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            } catch (e) {
+                // Fallback if Bootstrap Alert isn't available
+                if (alert && alert.parentNode) {
+                    alert.parentNode.removeChild(alert);
+                }
+            }
         }, 5000); // 5 seconds
     });
 
