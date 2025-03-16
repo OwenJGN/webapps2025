@@ -6,7 +6,7 @@ from .models import UserProfile
 
 class UserRegisterForm(UserCreationForm):
     """
-    Form for user registration with additional fields
+    Form for user registration
     """
     email = forms.EmailField(required=True)
     first_name = forms.CharField(required=True)
