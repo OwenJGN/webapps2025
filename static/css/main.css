@@ -1,55 +1,222 @@
-/* Main CSS file for PayApp */
+/* Enhanced CSS file for PayApp - Modern and clean design - Updated Version */
+
+/* Base styles and layout */
+:root {
+  --primary-color: #6366f1;
+  --primary-dark: #4f46e5;
+  --primary-light: #a5b4fc;
+  --secondary-color: #06b6d4;
+  --secondary-dark: #0891b2;
+  --success: #10b981;
+  --danger: #f43f5e;
+  --warning: #f59e0b;
+  --info: #0ea5e9;
+  --light: #f9fafb;
+  --dark: #1e293b;
+  --gray: #94a3b8;
+  --background: #f8fafc;
+  --card-bg: #ffffff;
+  --border-radius: 0.5rem;
+  --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --transition: all 0.3s ease;
+}
 
 body {
-    padding-top: 56px;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+  padding-top: 56px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  background-color: var(--background);
+  color: var(--dark);
 }
 
 .content {
-    flex: 1;
+  flex: 1;
+  padding: 2rem 0;
 }
 
 .footer {
-    margin-top: auto;
-    padding: 20px 0;
-    background-color: #f8f9fa;
+  margin-top: auto;
+  padding: 1.5rem 0;
+  background-color: var(--light);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Navigation improvements */
+.navbar-dark.bg-primary {
+  background: linear-gradient(to right, var(--primary-color), var(--secondary-color)) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
 .notification-badge {
-    position: relative;
-    top: -10px;
+  position: relative;
+  top: -8px;
+  right: -2px;
+  font-size: 0.65rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 50%;
 }
 
-/* Card styles */
+/* Card enhancements */
 .card {
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: none;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  transition: var(--transition);
+  background-color: var(--card-bg);
+}
+
+.card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 1rem 1.25rem;
 }
 
 .card-header.bg-primary {
-    color: white;
+  background: linear-gradient(to right, var(--primary-color), var(--secondary-color)) !important;
+  color: white;
+}
+
+.card-footer {
+  background-color: var(--light);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 1rem 1.25rem;
 }
 
 /* Button improvements */
+.btn {
+  border-radius: var(--border-radius);
+  padding: 0.5rem 1.25rem;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
 .btn-primary {
-    background-color: #0d6efd;
-    border-color: #0d6efd;
+  background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+  border: none;
+  position: relative;
+  z-index: 1;
 }
 
 .btn-primary:hover {
-    background-color: #0b5ed7;
-    border-color: #0a58ca;
+  transform: translateY(-1px);
 }
 
-/* Table improvements */
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(to right, var(--primary-dark), var(--secondary-dark));
+  z-index: -1;
+  transition: opacity 0.3s ease;
+  opacity: 0;
+  border-radius: var(--border-radius);
+}
+
+.btn-primary:hover::before {
+  opacity: 1;
+}
+
+.btn-outline-primary {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* Tables */
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
 .table-hover tbody tr:hover {
-    background-color: rgba(13, 110, 253, 0.1);
+  background-color: rgba(99, 102, 241, 0.08);
+}
+
+/* Dashboard stats cards */
+.card .display-4, .card .display-6 {
+  font-weight: 600;
+  background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Alerts and banners */
+.alert {
+  border-radius: var(--border-radius);
+  border: none;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.alert-info {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: #1e40af;
+}
+
+.alert-success {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #047857;
+}
+
+.alert-warning {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #92400e;
+}
+
+.alert-danger {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #b91c1c;
 }
 
 /* Form improvements */
-.form-control:focus {
-    border-color: #0d6efd;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+.form-control, .form-select {
+  border-radius: var(--border-radius);
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
+}
+
+/* Status badges */
+.badge {
+  padding: 0.5em 0.75em;
+  font-weight: 500;
+  border-radius: 0.25rem;
+}
+
+/* Mobile responsiveness improvements */
+@media (max-width: 768px) {
+  .display-4 {
+    font-size: 2.5rem;
+  }
+
+  .display-6 {
+    font-size: 1.5rem;
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+  }
 }

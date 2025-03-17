@@ -23,9 +23,6 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'home' %}">Home</a>
-                    </li>
                     {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
@@ -113,7 +110,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12 text-center">
-                    <p class="mb-0">&copy; 2025 PayApp - A Simplified PayPal Clone</p>
+                    <p class="mb-0">&copy; 2025 PayApp - 262924 - Web Application Assignment</p>
                 </div>
             </div>
         </div>
