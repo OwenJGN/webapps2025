@@ -31,7 +31,6 @@ INSTALLED_APPS = [
     # Local apps
     'register.apps.RegisterConfig',
     'payapp.apps.PayappConfig',
-    'currencyservice.apps.CurrencyserviceConfig',
 ]
 
 MIDDLEWARE = [
@@ -142,5 +141,5 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'  # Clickjacking protection
 
-# Currency conversion service URL
+# Currency conversion service URL - Updated to point to payapp endpoint
 CURRENCY_SERVICE_URL = 'http://localhost:8000/webapps2025/conversion/'
