@@ -1,5 +1,5 @@
 """
-Django settings for webapps2025 project.
+Django settings for webapps2025.
 """
 
 import os
