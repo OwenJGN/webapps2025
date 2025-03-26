@@ -13,5 +13,6 @@ urlpatterns = [
     path('webapps2025/', include([
         path('', include('register.urls')),
         path('', include('payapp.urls')),
+        path('', include('currency_service.urls')),
     ])),
 ]
