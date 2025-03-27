@@ -5,6 +5,7 @@
 {% block content %}
 <div class="row">
     <div class="col-md-12 mb-4">
+        <!-- Notifications header card -->
         <div class="card">
             <div class="card-header bg-primary text-white">
                 <h2 class="card-title mb-0">Your Notifications</h2>
@@ -13,7 +14,7 @@
     </div>
 </div>
 
-<!-- Payment Requests Received -->
+<!-- Payment requests received section -->
 <div class="row mb-4">
     <div class="col-md-12">
         <div class="card">
@@ -27,6 +28,7 @@
             </div>
             <div class="card-body">
                 {% if received_requests %}
+                <!-- Table of payment requests received -->
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
@@ -41,6 +43,7 @@
                         </thead>
                         <tbody>
                             {% for request in received_requests %}
+                            <!-- Row highlighting based on request status -->
                             <tr class="{% if request.status == 'pending' %}table-warning{% elif request.status == 'accepted' %}table-success{% elif request.status == 'rejected' %}table-danger{% endif %}">
                                 <td>{{ request.created_at|date:"M d, Y" }}</td>
                                 <td>{{ request.requester.username }}</td>
@@ -53,11 +56,13 @@
                                     {% endif %}
                                 </td>
                                 <td>
+                                    <!-- Status badge with appropriate color -->
                                     <span class="badge {% if request.status == 'pending' %}bg-warning{% elif request.status == 'accepted' %}bg-success{% elif request.status == 'rejected' %}bg-danger{% endif %}">
                                         {{ request.get_status_display }}
                                     </span>
                                 </td>
                                 <td>
+                                    <!-- Action button (only for pending requests) -->
                                     {% if request.status == 'pending' %}
                                     <a href="{% url 'respond_to_request' request.id %}" class="btn btn-sm btn-primary">Respond</a>
                                     {% else %}
@@ -70,6 +75,7 @@
                     </table>
                 </div>
                 {% else %}
+                <!-- Message for users with no payment requests -->
                 <div class="alert alert-info">
                     <p class="mb-0">You haven't received any payment requests.</p>
                 </div>
@@ -79,7 +85,7 @@
     </div>
 </div>
 
-<!-- Payment Requests Sent -->
+<!-- Payment requests sent section -->
 <div class="row">
     <div class="col-md-12">
         <div class="card">
@@ -93,6 +99,7 @@
             </div>
             <div class="card-body">
                 {% if sent_requests %}
+                <!-- Table of payment requests sent -->
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
@@ -106,6 +113,7 @@
                         </thead>
                         <tbody>
                             {% for request in sent_requests %}
+                            <!-- Row highlighting based on request status -->
                             <tr class="{% if request.status == 'pending' %}table-warning{% elif request.status == 'accepted' %}table-success{% elif request.status == 'rejected' %}table-danger{% endif %}">
                                 <td>{{ request.created_at|date:"M d, Y" }}</td>
                                 <td>{{ request.requestee.username }}</td>
@@ -118,6 +126,7 @@
                                     {% endif %}
                                 </td>
                                 <td>
+                                    <!-- Status badge with appropriate colour -->
                                     <span class="badge {% if request.status == 'pending' %}bg-warning{% elif request.status == 'accepted' %}bg-success{% elif request.status == 'rejected' %}bg-danger{% endif %}">
                                         {{ request.get_status_display }}
                                     </span>
@@ -128,6 +137,7 @@
                     </table>
                 </div>
                 {% else %}
+                <!-- Message for users with no sent payment requests -->
                 <div class="alert alert-info">
                     <p class="mb-0">You haven't sent any payment requests.</p>
                 </div>

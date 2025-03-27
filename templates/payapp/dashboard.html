@@ -5,12 +5,14 @@
 {% block content %}
 <div class="row mb-4">
     <div class="col-md-12">
+        <!-- Main dashboard card with welcome message -->
         <div class="card">
             <div class="card-header bg-primary text-white">
                 <h2 class="card-title mb-0">Welcome, {{ user.first_name }}!</h2>
             </div>
             <div class="card-body">
                 <div class="row">
+                    <!-- Balance display card -->
                     <div class="col-md-4 text-center">
                         <div class="card h-100">
                             <div class="card-body">
@@ -20,21 +22,25 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Quick actions card with primary functions -->
                     <div class="col-md-8">
                         <div class="card h-100">
                             <div class="card-body">
                                 <h3 class="text-primary mb-3">Quick Actions</h3>
                                 <div class="row">
+                                    <!-- Send money button -->
                                     <div class="col-md-6 mb-3">
                                         <a href="{% url 'make_payment' %}" class="btn btn-primary btn-lg d-block">
                                             <i class="bi bi-cash"></i> Send Money
                                         </a>
                                     </div>
+                                    <!-- Request money button -->
                                     <div class="col-md-6 mb-3">
                                         <a href="{% url 'request_payment' %}" class="btn btn-outline-primary btn-lg d-block">
                                             <i class="bi bi-inbox"></i> Request Money
                                         </a>
                                     </div>
+                                    <!-- Notifications button with badge for pending requests -->
                                     <div class="col-md-6 mb-3">
                                         <a href="{% url 'notifications' %}" class="btn btn-outline-primary btn-lg d-block">
                                             <i class="bi bi-bell"></i> Notifications
@@ -43,6 +49,7 @@
                                             {% endif %}
                                         </a>
                                     </div>
+                                    <!-- View transactions button -->
                                     <div class="col-md-6 mb-3">
                                         <a href="{% url 'transactions' %}" class="btn btn-outline-primary btn-lg d-block">
                                             <i class="bi bi-list"></i> View Transactions
@@ -58,7 +65,7 @@
     </div>
 </div>
 
-<!-- Recent Transactions -->
+<!-- Recent transactions section -->
 <div class="row mb-4">
     <div class="col-md-8">
         <div class="card">
@@ -67,6 +74,7 @@
             </div>
             <div class="card-body">
                 {% if transactions %}
+                <!-- Table of recent transactions -->
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
@@ -82,6 +90,7 @@
                             <tr>
                                 <td>{{ transaction.timestamp|date:"M d, Y" }}</td>
                                 <td>
+                                    <!-- Different display based on if user is sender or receiver -->
                                     {% if transaction.sender == user %}
                                         Payment to {{ transaction.receiver.username }}
                                     {% else %}
@@ -98,6 +107,7 @@
                                         Payment Request
                                     {% endif %}
                                 </td>
+                                <!-- Color-coded amount: red for outgoing, green for incoming -->
                                 <td class="{% if transaction.sender == user %}text-danger{% else %}text-success{% endif %}">
                                     {% if transaction.sender == user %}
                                         -{{ transaction.get_sender_amount_display }}
@@ -114,6 +124,7 @@
                     <a href="{% url 'transactions' %}" class="btn btn-sm btn-outline-primary">View All Transactions</a>
                 </div>
                 {% else %}
+                <!-- Message for users with no transactions -->
                 <div class="alert alert-info">
                     <p class="mb-0">You don't have any transactions yet.</p>
                 </div>
@@ -122,7 +133,7 @@
         </div>
     </div>
 
-    <!-- Pending Requests -->
+    <!-- Pending requests section -->
     <div class="col-md-4">
         <div class="card">
             <div class="card-header bg-light">
@@ -135,6 +146,7 @@
             </div>
             <div class="card-body">
                 {% if pending_requests %}
+                <!-- List of pending payment requests -->
                 <div class="list-group">
                     {% for request in pending_requests %}
                     <div class="list-group-item list-group-item-action">
@@ -156,6 +168,7 @@
                     <a href="{% url 'notifications' %}" class="btn btn-sm btn-outline-primary">View All Requests</a>
                 </div>
                 {% else %}
+                <!-- Message for users with no pending requests -->
                 <div class="alert alert-info">
                     <p class="mb-0">You don't have any pending payment requests.</p>
                 </div>

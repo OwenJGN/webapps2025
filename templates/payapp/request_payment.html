@@ -6,17 +6,20 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-8">
+        <!-- Payment request form card -->
         <div class="card">
             <div class="card-header bg-primary text-white">
                 <h2 class="card-title mb-0">Request Money</h2>
             </div>
             <div class="card-body">
+                <!-- Display user's current currency information -->
                 <div class="info-card alert-permanent mb-4">
                     <h5 class="info-card-heading">Your Currency</h5>
                     <p class="mb-0">{{ user.profile.get_currency_display }}</p>
                     <small class="text-muted">The amount you request will be in your currency.</small>
                 </div>
 
+                <!-- Request details form -->
                 <form method="POST">
                     {% csrf_token %}
                     <fieldset class="mb-4">
@@ -29,6 +32,7 @@
                     </div>
                 </form>
             </div>
+            <!-- Information footer about request processing -->
             <div class="card-footer bg-light">
                 <div class="text-muted">
                     <p class="mb-0"><strong>Note:</strong> The recipient will see your request and can choose to accept or reject it. Currency conversion will be applied automatically if needed.</p>

@@ -1,10 +1,12 @@
 from decimal import Decimal
 
 
-# Currency conversion rates and utility functions will be stored here
 class CurrencyConverter:
     """
-    A utility class that handles currency conversion calculations
+    A utility class that handles currency conversion calculations.
+
+    This class provides static methods for currency conversion using
+    predefined exchange rates. It supports GBP, USD, and EUR currencies.
     """
 
     # Hard-coded exchange rates (as of 2025)
@@ -18,13 +20,21 @@ class CurrencyConverter:
 
     @classmethod
     def is_valid_currency(cls, currency):
-        """Check if a currency is supported"""
+        """
+        Check if a currency is supported by the conversion service.
+
+        Args:
+            currency (str): Currency code to validate
+
+        Returns:
+            bool: True if the currency is supported, False otherwise
+        """
         return currency in cls.SUPPORTED_CURRENCIES
 
     @classmethod
     def convert(cls, from_currency, to_currency, amount):
         """
-        Convert an amount from one currency to another
+        Convert an amount from one currency to another.
 
         Args:
             from_currency (str): Source currency code
@@ -32,7 +42,7 @@ class CurrencyConverter:
             amount (Decimal): Amount to convert
 
         Returns:
-            Decimal: Converted amount
+            Decimal: Converted amount, or None if conversion is not possible
         """
         if not cls.is_valid_currency(from_currency) or not cls.is_valid_currency(to_currency):
             return None

@@ -1,5 +1,3 @@
-import os
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -17,7 +15,16 @@ from django.conf import settings
 @login_required
 def dashboard(request):
     """
-    Main dashboard view showing user's balance and recent transactions
+    Main dashboard view showing user's balance and recent transactions.
+
+    Displays the user's current balance, recent transactions, pending payment
+    requests, and provides quick links to key functionality.
+
+    Args:
+        request: The HTTP request object
+
+    Returns:
+        HttpResponse: Rendered dashboard template with context
     """
     # Get user's recent transactions (limit to 5)
     user_transactions = Transaction.objects.filter(
@@ -46,7 +53,16 @@ def dashboard(request):
 @login_required
 def make_payment(request):
     """
-    Handle making direct payments to other users
+    Handle making direct payments to other users.
+
+    Processes the form submission to send money to another user, including
+    currency conversion if the recipient uses a different currency.
+
+    Args:
+        request: The HTTP request object
+
+    Returns:
+        HttpResponse: Rendered form or redirect after successful submission
     """
     if request.method == 'POST':
         form = MakePaymentForm(request.POST, initial={'sender': request.user})
@@ -71,7 +87,6 @@ def make_payment(request):
 
             if sender_currency != recipient_currency:
                 try:
-
                     response = requests.get(
                         f"{settings.CURRENCY_SERVICE_URL}{sender_currency}/{recipient_currency}/{amount}",
                         verify=False
@@ -115,7 +130,15 @@ def make_payment(request):
 @login_required
 def request_payment(request):
     """
-    Handle requesting payments from other users
+    Handle requesting payments from other users.
+
+    Processes the form submission to request money from another user.
+
+    Args:
+        request: The HTTP request object
+
+    Returns:
+        HttpResponse: Rendered form or redirect after successful submission
     """
     if request.method == 'POST':
         form = RequestPaymentForm(request.POST, initial={'requester': request.user})
@@ -155,7 +178,15 @@ def request_payment(request):
 @login_required
 def notifications(request):
     """
-    Show and handle user's payment requests
+    Show and handle user's payment requests.
+
+    Displays both received and sent payment requests.
+
+    Args:
+        request: The HTTP request object
+
+    Returns:
+        HttpResponse: Rendered notifications template with context
     """
     # Get requests received by the user
     received_requests = PaymentRequest.objects.filter(
@@ -176,7 +207,17 @@ def notifications(request):
 @login_required
 def respond_to_request(request, request_id):
     """
-    Handle responding to a payment request
+    Handle responding to a payment request.
+
+    Processes the form submission to accept or reject a payment request.
+    If accepted, transfers the money and updates statuses accordingly.
+
+    Args:
+        request: The HTTP request object
+        request_id: The ID of the payment request to respond to
+
+    Returns:
+        HttpResponse: Rendered form or redirect after successful submission
     """
     payment_request = get_object_or_404(PaymentRequest, id=request_id, requestee=request.user, status='pending')
 
@@ -201,7 +242,6 @@ def respond_to_request(request, request_id):
                     amount_requestee_currency = amount_requester_currency
                     if requester_currency != requestee_currency:
                         try:
-
                             response = requests.get(
                                 f"{settings.CURRENCY_SERVICE_URL}{requester_currency}/{requestee_currency}/{amount_requester_currency}",
                                 verify=False
@@ -259,7 +299,6 @@ def respond_to_request(request, request_id):
 
     if requester_currency != user_currency:
         try:
-
             response = requests.get(
                 f"{settings.CURRENCY_SERVICE_URL}{requester_currency}/{user_currency}/{requested_amount}",
                 verify=False
@@ -285,7 +324,15 @@ def respond_to_request(request, request_id):
 @login_required
 def transactions(request):
     """
-    Show user's transaction history
+    Show user's transaction history.
+
+    Displays all transactions where the user is either the sender or receiver.
+
+    Args:
+        request: The HTTP request object
+
+    Returns:
+        HttpResponse: Rendered transactions template with context
     """
     # Get all transactions involving the user
     user_transactions = Transaction.objects.filter(
@@ -300,7 +347,15 @@ def transactions(request):
 @login_required
 def admin_users(request):
     """
-    Admin view to see all user accounts (staff only)
+    Admin view to see all user accounts.
+
+    Displays a list of all users with their account information.
+
+    Args:
+        request: The HTTP request object
+
+    Returns:
+        HttpResponse: Rendered admin users template or redirect if not authorised
     """
     if not request.user.is_staff:
         messages.error(request, 'You do not have permission to access this page.')
@@ -317,7 +372,15 @@ def admin_users(request):
 @login_required
 def admin_transactions(request):
     """
-    Admin view to see all transactions (staff only)
+    Admin view to see all transactions.
+
+    Displays a list of all transactions in the system.
+
+    Args:
+        request: The HTTP request object
+
+    Returns:
+        HttpResponse: Rendered admin transactions template or redirect if not authorised
     """
     if not request.user.is_staff:
         messages.error(request, 'You do not have permission to access this page.')
@@ -334,7 +397,15 @@ def admin_transactions(request):
 @login_required
 def register_admin(request):
     """
-    Handle admin registration (only accessible by staff)
+    Handle admin registration.
+
+    Processes the form submission to create a new administrator account.
+
+    Args:
+        request: The HTTP request object
+
+    Returns:
+        HttpResponse: Rendered form or redirect after successful submission
     """
     if not request.user.is_staff:
         messages.error(request, 'You do not have permission to access this page.')
@@ -356,7 +427,6 @@ def register_admin(request):
                 else:
                     # Convert from GBP to admin's currency
                     try:
-
                         response = requests.get(
                             f"{settings.CURRENCY_SERVICE_URL}GBP/{admin_currency}/{initial_amount_gbp}",
                             verify=False

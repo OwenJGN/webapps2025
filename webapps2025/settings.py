@@ -25,14 +25,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
-    # Third-party apps
     'crispy_forms',
     'crispy_bootstrap4',
     'rest_framework',
-    # Local apps
     'register.apps.RegisterConfig',
     'payapp.apps.PayappConfig',
-    'currency_service.apps.CurrencyServiceConfig',  # Add the new Currency Service app
+    'currency_service.apps.CurrencyServiceConfig',
 ]
 
 MIDDLEWARE = [
@@ -96,7 +94,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
+# Internationalisation
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-gb'
@@ -124,7 +122,7 @@ LOGIN_REDIRECT_URL = 'dashboard'
 LOGIN_URL = 'login'
 
 # Enable security settings in production
-if not DEBUG:  # Only apply these in production
+if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_SSL_REDIRECT = True

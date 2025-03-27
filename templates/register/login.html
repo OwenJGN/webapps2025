@@ -6,11 +6,13 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-6">
+        <!-- Login card -->
         <div class="card">
             <div class="card-header bg-primary text-white">
                 <h2 class="card-title mb-0">Login</h2>
             </div>
             <div class="card-body">
+                <!-- Login form -->
                 <form method="POST">
                     {% csrf_token %}
                     <fieldset class="mb-4">
@@ -21,6 +23,7 @@
                         <button class="btn btn-primary" type="submit">Login</button>
                     </div>
                 </form>
+                <!-- Link to register for new users -->
                 <div class="border-top pt-3">
                     <small class="text-muted">
                         Need An Account? <a class="ml-2" href="{% url 'register' %}">Sign Up Now</a>

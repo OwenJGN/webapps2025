@@ -1,15 +1,15 @@
-import os
-
 from django.db import models
 from django.contrib.auth.models import User
-from django.utils import timezone
 import requests
 from django.conf import settings
 
 
 class Transaction(models.Model):
     """
-    Model to store payment transactions between users
+    Model to store payment transactions between users.
+
+    Represents a money transfer between two users, tracking the amount in both
+    sender's and receiver's currencies, transaction type, and related details.
     """
     TRANSACTION_TYPES = [
         ('payment', 'Direct Payment'),
@@ -35,7 +35,12 @@ class Transaction(models.Model):
         return f"{self.sender.username} paid {self.receiver.username} {self.amount_sender_currency} {self.sender_currency}"
 
     def get_sender_amount_display(self):
-        """Returns formatted amount with currency symbol for sender"""
+        """
+        Returns the sender amount formatted with appropriate currency symbol.
+
+        Returns:
+            str: Formatted amount with currency symbol
+        """
         if self.sender_currency == 'GBP':
             return f"£{self.amount_sender_currency:.2f}"
         elif self.sender_currency == 'USD':
@@ -45,7 +50,12 @@ class Transaction(models.Model):
         return f"{self.amount_sender_currency:.2f}"
 
     def get_receiver_amount_display(self):
-        """Returns formatted amount with currency symbol for receiver"""
+        """
+        Returns the receiver amount formatted with appropriate currency symbol.
+
+        Returns:
+            str: Formatted amount with currency symbol
+        """
         if self.receiver_currency == 'GBP':
             return f"£{self.amount_receiver_currency:.2f}"
         elif self.receiver_currency == 'USD':
@@ -57,7 +67,10 @@ class Transaction(models.Model):
 
 class PaymentRequest(models.Model):
     """
-    Model to store payment requests between users
+    Model to store payment requests between users.
+
+    Represents a request for payment from one user to another, tracking
+    the requested amount, status, and related details.
     """
     STATUS_CHOICES = [
         ('pending', 'Pending'),
@@ -81,7 +94,12 @@ class PaymentRequest(models.Model):
         return f"{self.requester.username} requested {self.amount_requester_currency} {self.requester_currency} from {self.requestee.username}"
 
     def get_amount_display(self):
-        """Returns formatted amount with currency symbol"""
+        """
+        Returns the requested amount formatted with appropriate currency symbol.
+
+        Returns:
+            str: Formatted amount with currency symbol
+        """
         if self.requester_currency == 'GBP':
             return f"£{self.amount_requester_currency:.2f}"
         elif self.requester_currency == 'USD':
@@ -92,7 +110,12 @@ class PaymentRequest(models.Model):
 
     def get_amount_in_requestee_currency(self):
         """
-        Converts the requested amount to the requestee's currency
+        Converts the requested amount to the requestee's currency.
+
+        Uses the currency conversion service to convert the amount.
+
+        Returns:
+            Decimal: The converted amount in requestee's currency
         """
         from_currency = self.requester_currency
         to_currency = self.requestee.profile.currency
@@ -103,7 +126,7 @@ class PaymentRequest(models.Model):
         try:
             response = requests.get(
                 f"{settings.CURRENCY_SERVICE_URL}{from_currency}/{to_currency}/{self.amount_requester_currency}",
-                verify = False
+                verify=False
             )
             if response.status_code == 200:
                 return response.json().get('converted_amount')

@@ -7,13 +7,26 @@ from .services import CurrencyConverter
 
 class CurrencyConversionView(APIView):
     """
-    A RESTful API view that handles currency conversion
+    A RESTful API view that handles currency conversion requests.
+
     Endpoint: /currency_service/conversion/{from_currency}/{to_currency}/{amount}
+
+    Returns the converted amount along with conversion details or appropriate
+    error response if the request is invalid.
     """
 
     def get(self, request, from_currency, to_currency, amount):
         """
-        Convert an amount from one currency to another
+        Convert an amount from one currency to another.
+
+        Args:
+            request: The HTTP request object
+            from_currency (str): Source currency code (e.g., 'GBP', 'USD', 'EUR')
+            to_currency (str): Target currency code (e.g., 'GBP', 'USD', 'EUR')
+            amount (str): Amount to convert as a string
+
+        Returns:
+            Response: JSON response with conversion details or error message
         """
         # Convert currencies to uppercase
         from_currency = from_currency.upper()

@@ -5,11 +5,13 @@
 {% block content %}
 <div class="row">
     <div class="col-md-12 mb-4">
+        <!-- Admin transactions view card -->
         <div class="card">
             <div class="card-header bg-primary text-white">
                 <h2 class="card-title mb-0">Administration - All Transactions</h2>
             </div>
             <div class="card-body">
+                <!-- Admin panel header with navigation -->
                 <div class="alert alert-secondary mb-4">
                     <div class="row">
                         <div class="col-md-8">
@@ -23,6 +25,7 @@
                 </div>
 
                 {% if transactions %}
+                <!-- Table of all system transactions -->
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
                         <thead>
@@ -43,6 +46,7 @@
                                 <td>{{ transaction.id }}</td>
                                 <td>{{ transaction.timestamp|date:"M d, Y H:i" }}</td>
                                 <td>
+                                    <!-- Badge indicating transaction type -->
                                     {% if transaction.transaction_type == 'payment' %}
                                     <span class="badge bg-primary">Direct Payment</span>
                                     {% else %}
@@ -66,6 +70,7 @@
                     </table>
                 </div>
                 {% else %}
+                <!-- Message for empty transaction history -->
                 <div class="alert alert-warning">
                     <p class="mb-0">No transactions found in the system.</p>
                 </div>

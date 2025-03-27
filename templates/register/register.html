@@ -6,19 +6,23 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-8">
+        <!-- User registration card -->
         <div class="card">
             <div class="card-header bg-primary text-white">
                 <h2 class="card-title mb-0">Register an Account</h2>
             </div>
             <div class="card-body">
+                <!-- Registration form -->
                 <form method="POST">
                     {% csrf_token %}
                     <fieldset class="mb-4">
                         <legend class="border-bottom mb-4">Join PayApp Today</legend>
                         <div class="row">
+                            <!-- User details form section -->
                             <div class="col-md-6">
                                 {{ user_form|crispy }}
                             </div>
+                            <!-- Currency selection with explanation about initial balance -->
                             <div class="col-md-6">
                                 <div class="alert alert-info">
                                     <h4 class="alert-heading">Select Your Currency</h4>
@@ -35,6 +39,7 @@
                         <button class="btn btn-primary" type="submit">Register</button>
                     </div>
                 </form>
+                <!-- Link to login for existing users -->
                 <div class="border-top pt-3">
                     <small class="text-muted">
                         Already Have An Account? <a class="ml-2" href="{% url 'login' %}">Sign In</a>

@@ -1,5 +1,3 @@
-import os
-
 from django import forms
 from django.contrib.auth.models import User
 from .models import Transaction, PaymentRequest
@@ -10,14 +8,23 @@ from django.conf import settings
 
 class MakePaymentForm(forms.Form):
     """
-    Form for making direct payments to other users
+    Form for making direct payments to other users.
+    Allows a user to specify a recipient by email, payment amount, and optional description.
     """
     recipient_email = forms.EmailField(label="Recipient's Email")
     amount = forms.DecimalField(max_digits=10, decimal_places=2, min_value=Decimal('0.01'))
     description = forms.CharField(max_length=255, required=False, widget=forms.Textarea(attrs={'rows': 3}))
 
     def clean_recipient_email(self):
-        """Validate that the recipient exists and is not the sender"""
+        """
+        Validates that the recipient exists and is not the sender.
+
+        Returns:
+            str: The validated email address
+
+        Raises:
+            ValidationError: If recipient doesn't exist or sender tries to pay themselves
+        """
         email = self.cleaned_data.get('recipient_email')
 
         # Check if user exists
@@ -33,7 +40,15 @@ class MakePaymentForm(forms.Form):
         return email
 
     def clean_amount(self):
-        """Validate that the amount is positive and within range"""
+        """
+        Validates that the amount is positive and sender has sufficient funds.
+
+        Returns:
+            Decimal: The validated amount
+
+        Raises:
+            ValidationError: If amount is invalid or insufficient funds
+        """
         amount = self.cleaned_data.get('amount')
         if amount <= 0:
             raise forms.ValidationError("Amount must be greater than zero.")
@@ -49,14 +64,23 @@ class MakePaymentForm(forms.Form):
 
 class RequestPaymentForm(forms.Form):
     """
-    Form for requesting payments from other users
+    Form for requesting payments from other users.
+    Allows a user to specify a requestee by email, payment amount, and optional description.
     """
     requestee_email = forms.EmailField(label="Request From (Email)")
     amount = forms.DecimalField(max_digits=10, decimal_places=2, min_value=Decimal('0.01'))
     description = forms.CharField(max_length=255, required=False, widget=forms.Textarea(attrs={'rows': 3}))
 
     def clean_requestee_email(self):
-        """Validate that the requestee exists and is not the requester"""
+        """
+        Validates that the requestee exists and is not the requester.
+
+        Returns:
+            str: The validated email address
+
+        Raises:
+            ValidationError: If requestee doesn't exist or user tries to request from themselves
+        """
         email = self.cleaned_data.get('requestee_email')
 
         # Check if user exists
@@ -72,7 +96,15 @@ class RequestPaymentForm(forms.Form):
         return email
 
     def clean_amount(self):
-        """Validate that the amount is positive and within range"""
+        """
+        Validates that the amount is positive and within range.
+
+        Returns:
+            Decimal: The validated amount
+
+        Raises:
+            ValidationError: If amount is invalid
+        """
         amount = self.cleaned_data.get('amount')
         if amount <= 0:
             raise forms.ValidationError("Amount must be greater than zero.")
@@ -82,7 +114,8 @@ class RequestPaymentForm(forms.Form):
 
 class RespondToRequestForm(forms.Form):
     """
-    Form for responding to payment requests (accept/reject)
+    Form for responding to payment requests (accept/reject).
+    Allows a user to choose an action for a specific payment request.
     """
     CHOICES = [
         ('accept', 'Accept and Pay'),
@@ -93,7 +126,15 @@ class RespondToRequestForm(forms.Form):
     request_id = forms.IntegerField(widget=forms.HiddenInput())
 
     def clean(self):
-        """Validate that the user has sufficient funds if accepting"""
+        """
+        Validates that the user has sufficient funds if accepting a payment request.
+
+        Returns:
+            dict: The cleaned data
+
+        Raises:
+            ValidationError: If insufficient funds when accepting a request
+        """
         cleaned_data = super().clean()
         action = cleaned_data.get('action')
         request_id = cleaned_data.get('request_id')
@@ -103,13 +144,10 @@ class RespondToRequestForm(forms.Form):
                 payment_request = PaymentRequest.objects.get(id=request_id)
                 user = self.initial.get('user')
 
-                # Convert requested amount to user's currency
-                requested_amount_in_user_currency = Decimal('0')
 
                 # If currencies are different, convert
                 if payment_request.requester_currency != user.profile.currency:
                     try:
-
                         response = requests.get(
                             f"{settings.CURRENCY_SERVICE_URL}{payment_request.requester_currency}/{user.profile.currency}/{payment_request.amount_requester_currency}",
                             verify=False

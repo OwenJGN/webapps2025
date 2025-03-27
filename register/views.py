@@ -1,19 +1,25 @@
-import os
-
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.contrib.auth.models import User
-from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, AdminRegistrationForm, UserProfileForm
-from .models import UserProfile
+from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, UserProfileForm
 import requests
 from django.conf import settings
 
 
 def register(request):
     """
-    Handle user registration
+    Handle user registration with form validation and profile creation.
+
+    Creates a new user account and profile with the specified currency.
+    Sets the initial balance based on the standard amount in GBP,
+    converted to their selected currency if necessary.
+
+    Args:
+        request: The HTTP request
+
+    Returns:
+        HttpResponse: The rendered template or a redirect
     """
     if request.method == 'POST':
         user_form = UserRegisterForm(request.POST)
@@ -35,7 +41,6 @@ def register(request):
                 else:
                     # Convert from GBP to user's currency
                     try:
-
                         response = requests.get(
                             f"{settings.CURRENCY_SERVICE_URL}GBP/{user_currency}/{initial_amount_gbp}",
                             verify=False
@@ -65,7 +70,16 @@ def register(request):
 @login_required
 def profile(request):
     """
-    Handle user profile view/edit
+    Handle user profile viewing and editing.
+
+    Allows users to update their account details and currency preference.
+    If the currency is changed, converts their current balance to the new currency.
+
+    Args:
+        request: The HTTP request
+
+    Returns:
+        HttpResponse: The rendered template or a redirect
     """
     if request.method == 'POST':
         user_form = UserUpdateForm(request.POST, instance=request.user)
@@ -84,7 +98,6 @@ def profile(request):
                 # If currency changed, convert balance
                 if old_currency != new_currency:
                     try:
-
                         response = requests.get(
                             f"{settings.CURRENCY_SERVICE_URL}{old_currency}/{new_currency}/{old_balance}",
                             verify=False

@@ -6,12 +6,14 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-10">
+        <!-- User profile information and edit form -->
         <div class="card">
             <div class="card-header bg-primary text-white">
                 <h2 class="card-title mb-0">Your Profile</h2>
             </div>
             <div class="card-body">
                 <div class="row">
+                    <!-- Account information display panel -->
                     <div class="col-md-4 mb-4">
                         <div class="card">
                             <div class="card-header">
@@ -27,18 +29,21 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Profile update form -->
                     <div class="col-md-8">
                         <form method="POST">
                             {% csrf_token %}
                             <fieldset class="mb-4">
                                 <legend class="border-bottom mb-4">Update Your Profile</legend>
                                 <div class="row">
+                                    <!-- User account details form section -->
                                     <div class="col-md-6">
                                         <div class="form-group mb-4">
                                             <h5>Account Details</h5>
                                             {{ user_form|crispy }}
                                         </div>
                                     </div>
+                                    <!-- Currency preference form section with note about automatic conversion -->
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <h5>Currency Preference</h5>
