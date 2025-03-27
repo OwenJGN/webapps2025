@@ -107,28 +107,3 @@ def profile(request):
         'profile_form': profile_form,
         'user_profile': request.user.profile
     })
-
-
-# Signal to create initial admin user on application startup
-def create_initial_admin():
-    """Create initial admin user if no admins exist"""
-    if not User.objects.filter(is_staff=True).exists():
-        try:
-            # Check if username exists first
-            if not User.objects.filter(username='admin1').exists():
-                # Create admin user
-                admin = User.objects.create_user(
-                    username='admin1',
-                    email='admin1@example.com',
-                    password='admin1',
-                    first_name='Admin',
-                    last_name='User',
-                    is_staff=True
-                )
-
-                # The profile is created by the signal, just update the balance
-                if hasattr(admin, 'profile'):
-                    admin.profile.balance = 750.00
-                    admin.profile.save()
-        except Exception as e:
-            print(f"Error creating admin user: {e}")
