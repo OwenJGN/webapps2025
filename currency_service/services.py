@@ -7,11 +7,11 @@ class CurrencyConverter:
     A utility class that handles currency conversion calculations
     """
 
-    # Hard-coded exchange rates (as of 2023)
+    # Hard-coded exchange rates (as of 2025)
     EXCHANGE_RATES = {
-        'GBP': {'USD': Decimal('1.25'), 'EUR': Decimal('1.15'), 'GBP': Decimal('1.00')},
-        'USD': {'GBP': Decimal('0.80'), 'EUR': Decimal('0.92'), 'USD': Decimal('1.00')},
-        'EUR': {'GBP': Decimal('0.87'), 'USD': Decimal('1.09'), 'EUR': Decimal('1.00')},
+        'GBP': {'USD': Decimal('1.29'), 'EUR': Decimal('1.20'), 'GBP': Decimal('1.00')},
+        'USD': {'GBP': Decimal('0.78'), 'EUR': Decimal('0.93'), 'USD': Decimal('1.00')},
+        'EUR': {'GBP': Decimal('0.83'), 'USD': Decimal('1.08'), 'EUR': Decimal('1.00')},
     }
 
     SUPPORTED_CURRENCIES = ['GBP', 'USD', 'EUR']

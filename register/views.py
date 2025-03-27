@@ -40,6 +40,7 @@ def register(request):
                             f"{settings.CURRENCY_SERVICE_URL}GBP/{user_currency}/{initial_amount_gbp}",
                             verify=False
                         )
+
                         if response.status_code == 200:
                             user.profile.balance = response.json().get('converted_amount', initial_amount_gbp)
                         else:

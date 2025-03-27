@@ -101,10 +101,9 @@ class PaymentRequest(models.Model):
             return self.amount_requester_currency
 
         try:
-
             response = requests.get(
                 f"{settings.CURRENCY_SERVICE_URL}{from_currency}/{to_currency}/{self.amount_requester_currency}",
-                verify=False
+                verify = false
             )
             if response.status_code == 200:
                 return response.json().get('converted_amount')
