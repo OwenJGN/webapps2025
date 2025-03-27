@@ -1,3 +1,5 @@
+import os
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -69,8 +71,10 @@ def make_payment(request):
 
             if sender_currency != recipient_currency:
                 try:
+
                     response = requests.get(
-                        f"{settings.CURRENCY_SERVICE_URL}{sender_currency}/{recipient_currency}/{amount}"
+                        f"{settings.CURRENCY_SERVICE_URL}{sender_currency}/{recipient_currency}/{amount}",
+                        verify=False
                     )
                     if response.status_code == 200:
                         amount_recipient_currency = Decimal(response.json().get('converted_amount', amount))
@@ -197,8 +201,10 @@ def respond_to_request(request, request_id):
                     amount_requestee_currency = amount_requester_currency
                     if requester_currency != requestee_currency:
                         try:
+
                             response = requests.get(
-                                f"{settings.CURRENCY_SERVICE_URL}{requester_currency}/{requestee_currency}/{amount_requester_currency}"
+                                f"{settings.CURRENCY_SERVICE_URL}{requester_currency}/{requestee_currency}/{amount_requester_currency}",
+                                verify=False
                             )
                             if response.status_code == 200:
                                 amount_requestee_currency = Decimal(
@@ -253,8 +259,10 @@ def respond_to_request(request, request_id):
 
     if requester_currency != user_currency:
         try:
+
             response = requests.get(
-                f"{settings.CURRENCY_SERVICE_URL}{requester_currency}/{user_currency}/{requested_amount}"
+                f"{settings.CURRENCY_SERVICE_URL}{requester_currency}/{user_currency}/{requested_amount}",
+                verify=False
             )
             if response.status_code == 200:
                 converted_amount = Decimal(response.json().get('converted_amount', requested_amount))
@@ -348,8 +356,10 @@ def register_admin(request):
                 else:
                     # Convert from GBP to admin's currency
                     try:
+
                         response = requests.get(
-                            f"{settings.CURRENCY_SERVICE_URL}GBP/{admin_currency}/{initial_amount_gbp}"
+                            f"{settings.CURRENCY_SERVICE_URL}GBP/{admin_currency}/{initial_amount_gbp}",
+                            verify=False
                         )
                         if response.status_code == 200:
                             admin.profile.balance = response.json().get('converted_amount', initial_amount_gbp)

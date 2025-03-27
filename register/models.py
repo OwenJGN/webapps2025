@@ -1,3 +1,5 @@
+import os
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -53,8 +55,10 @@ def create_user_profile(sender, instance, created, **kwargs):
             else:
                 # Convert from GBP to the user's chosen currency
                 try:
+
                     response = requests.get(
-                        f"{settings.CURRENCY_SERVICE_URL}GBP/{profile.currency}/{initial_amount_gbp}"
+                        f"{settings.CURRENCY_SERVICE_URL}GBP/{profile.currency}/{initial_amount_gbp}",
+                        verify=False
                     )
                     if response.status_code == 200:
                         profile.balance = response.json().get('converted_amount', initial_amount_gbp)

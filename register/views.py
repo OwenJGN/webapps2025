@@ -1,3 +1,5 @@
+import os
+
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -33,8 +35,10 @@ def register(request):
                 else:
                     # Convert from GBP to user's currency
                     try:
+
                         response = requests.get(
-                            f"{settings.CURRENCY_SERVICE_URL}GBP/{user_currency}/{initial_amount_gbp}"
+                            f"{settings.CURRENCY_SERVICE_URL}GBP/{user_currency}/{initial_amount_gbp}",
+                            verify=False
                         )
                         if response.status_code == 200:
                             user.profile.balance = response.json().get('converted_amount', initial_amount_gbp)
@@ -79,8 +83,10 @@ def profile(request):
                 # If currency changed, convert balance
                 if old_currency != new_currency:
                     try:
+
                         response = requests.get(
-                            f"{settings.CURRENCY_SERVICE_URL}{old_currency}/{new_currency}/{old_balance}"
+                            f"{settings.CURRENCY_SERVICE_URL}{old_currency}/{new_currency}/{old_balance}",
+                            verify=False
                         )
                         if response.status_code == 200:
                             request.user.profile.balance = response.json().get('converted_amount', old_balance)

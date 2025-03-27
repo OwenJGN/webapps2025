@@ -145,4 +145,4 @@ SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'  # Clickjacking protection
 
 # Currency conversion service URL - Updated to point to the new Currency Service endpoint
-CURRENCY_SERVICE_URL = 'https://localhost:8000/webapps2025/currency_service/conversion/'
+CURRENCY_SERVICE_URL = 'http://localhost:8000/webapps2025/currency_service/conversion/'

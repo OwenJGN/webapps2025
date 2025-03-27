@@ -1,3 +1,5 @@
+import os
+
 from django import forms
 from django.contrib.auth.models import User
 from .models import Transaction, PaymentRequest
@@ -107,8 +109,10 @@ class RespondToRequestForm(forms.Form):
                 # If currencies are different, convert
                 if payment_request.requester_currency != user.profile.currency:
                     try:
+
                         response = requests.get(
-                            f"{settings.CURRENCY_SERVICE_URL}{payment_request.requester_currency}/{user.profile.currency}/{payment_request.amount_requester_currency}"
+                            f"{settings.CURRENCY_SERVICE_URL}{payment_request.requester_currency}/{user.profile.currency}/{payment_request.amount_requester_currency}",
+                            verify=False
                         )
                         if response.status_code == 200:
                             requested_amount_in_user_currency = Decimal(response.json().get('converted_amount', 0))
