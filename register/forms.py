@@ -6,7 +6,8 @@ from .models import UserProfile
 
 class UserRegisterForm(UserCreationForm):
     """
-    Form for user registration
+    Form for user registration that extends Django's UserCreationForm.
+    Includes email and name fields in addition to the default username and password.
     """
     email = forms.EmailField(required=True)
     first_name = forms.CharField(required=True)
@@ -17,7 +18,7 @@ class UserRegisterForm(UserCreationForm):
         fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2']
 
     def clean_email(self):
-        """Validate that the email is unique"""
+        """Validate that the email is unique in the system."""
         email = self.cleaned_data.get('email')
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError("Email is already in use.")
@@ -26,7 +27,8 @@ class UserRegisterForm(UserCreationForm):
 
 class UserProfileForm(forms.ModelForm):
     """
-    Form for creating/updating user profile
+    Form for creating or updating user profile information.
+    Currently only allows selection of currency preference.
     """
 
     class Meta:
@@ -36,7 +38,8 @@ class UserProfileForm(forms.ModelForm):
 
 class AdminRegistrationForm(UserCreationForm):
     """
-    Form for admin registration (used by existing admins)
+    Form for admin registration by existing administrators.
+    Creates staff users with administrative privileges and zero balance.
     """
     email = forms.EmailField(required=True)
     first_name = forms.CharField(required=True)
@@ -47,14 +50,14 @@ class AdminRegistrationForm(UserCreationForm):
         fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2']
 
     def clean_email(self):
-        """Validate that the email is unique"""
+        """Validate that the email is unique in the system."""
         email = self.cleaned_data.get('email')
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError("Email is already in use.")
         return email
 
     def save(self, commit=True):
-        """Create a staff user"""
+        """Create a staff user with administrative privileges."""
         user = super().save(commit=False)
         user.is_staff = True
         if commit:
@@ -64,7 +67,8 @@ class AdminRegistrationForm(UserCreationForm):
 
 class UserUpdateForm(forms.ModelForm):
     """
-    Form for updating user information
+    Form for updating existing user information.
+    Allows changes to username, email, and name fields.
     """
     email = forms.EmailField()
 
@@ -73,7 +77,7 @@ class UserUpdateForm(forms.ModelForm):
         fields = ['username', 'email', 'first_name', 'last_name']
 
     def clean_email(self):
-        """Validate that the email is unique (except for the current user)"""
+        """Validate that the email is unique (except for the current user)."""
         email = self.cleaned_data.get('email')
         if User.objects.filter(email=email).exclude(id=self.instance.id).exists():
             raise forms.ValidationError("Email is already in use.")
@@ -82,7 +86,8 @@ class UserUpdateForm(forms.ModelForm):
 
 class ProfileUpdateForm(forms.ModelForm):
     """
-    Form for updating user profile
+    Form for updating user profile settings.
+    Currently only allows changes to currency preference.
     """
 
     class Meta:

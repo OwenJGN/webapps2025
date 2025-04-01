@@ -1,60 +1,50 @@
 {% extends 'base.html' %}
-{% load crispy_forms_tags %}
 
-{% block title %}Profile - PayApp{% endblock %}
+{% block title %}Your Profile - PayApp{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-10">
+    <div class="col-md-8">
+        <!-- User profile information card -->
         <div class="card">
             <div class="card-header bg-primary text-white">
                 <h2 class="card-title mb-0">Your Profile</h2>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4 mb-4">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">Account Information</h5>
-                            </div>
-                            <div class="card-body">
+                <!-- Notice about read-only profile -->
+                <div class="alert alert-info mb-4">
+                    <h5 class="alert-heading">Profile Information</h5>
+                    <p class="mb-0">Your account details are shown below. /p>
+                </div>
+                
+                <!-- Account details display -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Account Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
                                 <p><strong>Username:</strong> {{ user.username }}</p>
                                 <p><strong>Email:</strong> {{ user.email }}</p>
                                 <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+                            </div>
+                            <div class="col-md-6">
                                 <p><strong>Currency:</strong> {{ user_profile.get_currency_display }}</p>
                                 <p><strong>Current Balance:</strong> {{ user_profile.get_formatted_balance }}</p>
                                 <p><strong>Account Created:</strong> {{ user_profile.created_at|date:"F d, Y" }}</p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-8">
-                        <form method="POST">
-                            {% csrf_token %}
-                            <fieldset class="mb-4">
-                                <legend class="border-bottom mb-4">Update Your Profile</legend>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-4">
-                                            <h5>Account Details</h5>
-                                            {{ user_form|crispy }}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <h5>Currency Preference</h5>
-                                                <small>
-                                                    <strong>Note:</strong> Changing your currency will convert your current balance
-                                                    to the new currency using the current exchange rate.
-                                                </small>
-                                            {{ profile_form|crispy }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </fieldset>
-                            <div class="form-group">
-                                <button class="btn btn-primary" type="submit">Update Profile</button>
-                            </div>
-                        </form>
+                </div>
+                
+                <!-- Quick links to payment functions -->
+                <div class="mt-4">
+                    <h5>Quick Actions</h5>
+                    <div class="btn-group">
+                        <a href="{% url 'dashboard' %}" class="btn btn-primary">Dashboard</a>
+                        <a href="{% url 'make_payment' %}" class="btn btn-outline-primary">Send Money</a>
+                        <a href="{% url 'request_payment' %}" class="btn btn-outline-primary">Request Money</a>
                     </div>
                 </div>
             </div>

@@ -1,19 +1,25 @@
-import os
-
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.contrib.auth.models import User
-from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, AdminRegistrationForm, UserProfileForm
-from .models import UserProfile
+from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, UserProfileForm
 import requests
 from django.conf import settings
 
 
 def register(request):
     """
-    Handle user registration
+    Handle user registration with form validation and profile creation.
+
+    Creates a new user account and profile with the specified currency.
+    Sets the initial balance based on the standard amount in GBP,
+    converted to their selected currency if necessary.
+
+    Args:
+        request: The HTTP request
+
+    Returns:
+        HttpResponse: The rendered template or a redirect
     """
     if request.method == 'POST':
         user_form = UserRegisterForm(request.POST)
@@ -35,7 +41,6 @@ def register(request):
                 else:
                     # Convert from GBP to user's currency
                     try:
-
                         response = requests.get(
                             f"{settings.CURRENCY_SERVICE_URL}GBP/{user_currency}/{initial_amount_gbp}",
                             verify=False
@@ -65,45 +70,31 @@ def register(request):
 @login_required
 def profile(request):
     """
-    Handle user profile view/edit
+    Handle user profile viewing only.
+
+    Users can view their account details but not edit them.
+    Admins are redirected to the admin area as they don't have profiles.
+
+    Args:
+        request: The HTTP request
+
+    Returns:
+        HttpResponse: The rendered template or a redirect
     """
+    # Admin users don't have profiles
+    if request.user.is_staff:
+        messages.info(request, 'Admin accounts do not have user profiles.')
+        return redirect('admin_users')
+
+    # If a POST request comes in (which shouldn't happen with the read-only form),
+    # redirect to the profile page with a message
     if request.method == 'POST':
-        user_form = UserUpdateForm(request.POST, instance=request.user)
-        profile_form = ProfileUpdateForm(request.POST, instance=request.user.profile)
+        messages.warning(request, 'Profile editing is disabled. Contact an administrator for any account changes.')
+        return redirect('profile')
 
-        if user_form.is_valid() and profile_form.is_valid():
-            # Get old currency before saving
-            old_currency = request.user.profile.currency
-            new_currency = profile_form.cleaned_data.get('currency')
-            old_balance = request.user.profile.balance
-
-            with transaction.atomic():
-                user_form.save()
-                profile_form.save()
-
-                # If currency changed, convert balance
-                if old_currency != new_currency:
-                    try:
-
-                        response = requests.get(
-                            f"{settings.CURRENCY_SERVICE_URL}{old_currency}/{new_currency}/{old_balance}",
-                            verify=False
-                        )
-                        if response.status_code == 200:
-                            request.user.profile.balance = response.json().get('converted_amount', old_balance)
-                            request.user.profile.save()
-                    except Exception:
-                        # Keep old balance if conversion fails
-                        pass
-
-            messages.success(request, 'Your account has been updated!')
-            return redirect('profile')
-    else:
-        user_form = UserUpdateForm(instance=request.user)
-        profile_form = ProfileUpdateForm(instance=request.user.profile)
-
+    # Just display the profile read-only
     return render(request, 'register/profile.html', {
-        'user_form': user_form,
-        'profile_form': profile_form,
-        'user_profile': request.user.profile
+        'user': request.user,
+        'user_profile': request.user.profile,
+        'read_only': True  # Flag to tell the template this is read-only
     })

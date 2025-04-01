@@ -6,19 +6,29 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-8">
+        <!-- Admin registration card -->
         <div class="card">
             <div class="card-header bg-primary text-white">
                 <h2 class="card-title mb-0">Register New Administrator</h2>
             </div>
             <div class="card-body">
+                <!-- Warning about admin privileges -->
                 <div class="alert alert-warning mb-4">
                     <h5 class="alert-heading">Admin Registration</h5>
+                    <p>
+                        You are creating a new administrator account. This user will have the following permissions:
+                    </p>
+                    <ul>
+                        <li>View all user accounts and their details</li>
+                        <li>View all transaction records in the system</li>
+                        <li>Register new admin accounts</li>
+                    </ul>
                     <p class="mb-0">
-                        You are creating a new administrator account. This user will have full access to the admin panel
-                        and all user data. Please use this privilege responsibly.
+                        <strong>Note:</strong> Admin accounts cannot send or receive money, and will not have a balance.
                     </p>
                 </div>
 
+                <!-- Admin registration form -->
                 <form method="POST">
                     {% csrf_token %}
                     <fieldset class="mb-4">
@@ -31,9 +41,10 @@
                     </div>
                 </form>
             </div>
+            <!-- Information about admin restrictions -->
             <div class="card-footer bg-light">
                 <div class="text-muted">
-                    <p class="mb-0"><strong>Note:</strong> New admin accounts will start with the same initial balance as regular users.</p>
+                    <p class="mb-0"><strong>Important:</strong> Admin accounts are restricted to administrative functions only and cannot participate in the payment system.</p>
                 </div>
             </div>
         </div>

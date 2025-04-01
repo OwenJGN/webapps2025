@@ -6,11 +6,13 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-8">
+        <!-- Response to payment request card -->
         <div class="card">
             <div class="card-header bg-primary text-white">
                 <h2 class="card-title mb-0">Respond to Payment Request</h2>
             </div>
             <div class="card-body">
+                <!-- User balance and request details summary -->
                 <div class="alert alert-info mb-4">
                     <div class="row">
                         <div class="col-md-6">
@@ -21,14 +23,18 @@
                             <h5 class="alert-heading">Request Details</h5>
                             <p><strong>From:</strong> {{ payment_request.requester.username }}</p>
                             <p><strong>Requested Amount:</strong> {{ payment_request.get_amount_display }}</p>
+                            <!-- Show converted amount if currencies differ, rounded to 2 decimal places -->
                             {% if payment_request.requester_currency != user.profile.currency %}
-                            <p><strong>Amount in your currency:</strong> {{ payment_request.user_currency }}{{ payment_request.converted_amount }}</p>
+                            <p><strong>Amount in your currency:</strong> 
+                               {% if payment_request.user_currency == 'GBP' %}£{% elif payment_request.user_currency == 'USD' %}${% elif payment_request.user_currency == 'EUR' %}€{% endif %}{{ payment_request.converted_amount|floatformat:2 }}
+                            </p>
                             {% endif %}
                             <p><strong>Date:</strong> {{ payment_request.created_at|date:"M d, Y" }}</p>
                         </div>
                     </div>
                 </div>
 
+                <!-- Request description if provided -->
                 {% if payment_request.description %}
                 <div class="mb-4">
                     <h5>Description</h5>
@@ -40,6 +46,7 @@
                 </div>
                 {% endif %}
 
+                <!-- Response form (accept/reject) -->
                 <form method="POST">
                     {% csrf_token %}
                     <fieldset class="mb-4">
@@ -52,6 +59,7 @@
                     </div>
                 </form>
             </div>
+            <!-- Information footer about accepting requests -->
             <div class="card-footer bg-light">
                 <div class="text-muted">
                     <p class="mb-0"><strong>Note:</strong> Accepting the request will immediately transfer funds from your account to the requester.</p>

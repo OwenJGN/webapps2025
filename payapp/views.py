@@ -1,5 +1,3 @@
-import os
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -17,8 +15,23 @@ from django.conf import settings
 @login_required
 def dashboard(request):
     """
-    Main dashboard view showing user's balance and recent transactions
+    Main dashboard view showing user's balance and recent transactions.
+
+    For regular users, displays balance, transactions, and payment options.
+    For admin users, only shows admin-specific navigation options.
+
+    Args:
+        request: The HTTP request object
+
+    Returns:
+        HttpResponse: Rendered dashboard template with context
     """
+    # Check if user is admin
+    if request.user.is_staff:
+        # Redirect admins to the admin dashboard
+        return redirect('admin_users')
+
+    # For regular users, proceed with normal dashboard
     # Get user's recent transactions (limit to 5)
     user_transactions = Transaction.objects.filter(
         Q(sender=request.user) | Q(receiver=request.user)
@@ -46,8 +59,21 @@ def dashboard(request):
 @login_required
 def make_payment(request):
     """
-    Handle making direct payments to other users
+    Handle making direct payments to other users.
+
+    Restricted for admin users who cannot send money.
+
+    Args:
+        request: The HTTP request object
+
+    Returns:
+        HttpResponse: Rendered form or redirect after successful submission
     """
+    # Block admin users from making payments
+    if request.user.is_staff:
+        messages.error(request, 'Admin users are not allowed to send money.')
+        return redirect('admin_users')
+
     if request.method == 'POST':
         form = MakePaymentForm(request.POST, initial={'sender': request.user})
 
@@ -58,6 +84,11 @@ def make_payment(request):
 
             # Get recipient user
             recipient = User.objects.get(email=recipient_email)
+
+            # Block payments to admin users
+            if recipient.is_staff:
+                messages.error(request, 'Cannot send money to admin users.')
+                return redirect('dashboard')
 
             # Sender and their currency
             sender = request.user
@@ -71,7 +102,6 @@ def make_payment(request):
 
             if sender_currency != recipient_currency:
                 try:
-
                     response = requests.get(
                         f"{settings.CURRENCY_SERVICE_URL}{sender_currency}/{recipient_currency}/{amount}",
                         verify=False
@@ -115,8 +145,21 @@ def make_payment(request):
 @login_required
 def request_payment(request):
     """
-    Handle requesting payments from other users
+    Handle requesting payments from other users.
+
+    Restricted for admin users who cannot request money.
+
+    Args:
+        request: The HTTP request object
+
+    Returns:
+        HttpResponse: Rendered form or redirect after successful submission
     """
+    # Block admin users from requesting payments
+    if request.user.is_staff:
+        messages.error(request, 'Admin users are not allowed to request money.')
+        return redirect('admin_users')
+
     if request.method == 'POST':
         form = RequestPaymentForm(request.POST, initial={'requester': request.user})
 
@@ -127,6 +170,11 @@ def request_payment(request):
 
             # Get requestee user
             requestee = User.objects.get(email=requestee_email)
+
+            # Block requests to admin users
+            if requestee.is_staff:
+                messages.error(request, 'Cannot request money from admin users.')
+                return redirect('dashboard')
 
             # Requester and their currency
             requester = request.user
@@ -155,8 +203,21 @@ def request_payment(request):
 @login_required
 def notifications(request):
     """
-    Show and handle user's payment requests
+    Show and handle user's payment requests.
+
+    For admin users, redirects to admin panel.
+
+    Args:
+        request: The HTTP request object
+
+    Returns:
+        HttpResponse: Rendered notifications template with context
     """
+    # Block admin users from viewing notifications
+    if request.user.is_staff:
+        messages.error(request, 'Admin users do not have personal notifications.')
+        return redirect('admin_users')
+
     # Get requests received by the user
     received_requests = PaymentRequest.objects.filter(
         requestee=request.user
@@ -176,8 +237,24 @@ def notifications(request):
 @login_required
 def respond_to_request(request, request_id):
     """
-    Handle responding to a payment request
+    Handle responding to a payment request.
+
+    Processes the form submission to accept or reject a payment request.
+    If accepted, transfers the money and updates statuses accordingly.
+    Displays rounded amounts to users in success messages.
+
+    Args:
+        request: The HTTP request object
+        request_id: The ID of the payment request to respond to
+
+    Returns:
+        HttpResponse: Rendered form or redirect after successful submission
     """
+    # Block admin users from responding to requests
+    if request.user.is_staff:
+        messages.error(request, 'Admin users cannot respond to payment requests.')
+        return redirect('admin_users')
+
     payment_request = get_object_or_404(PaymentRequest, id=request_id, requestee=request.user, status='pending')
 
     if request.method == 'POST':
@@ -201,7 +278,6 @@ def respond_to_request(request, request_id):
                     amount_requestee_currency = amount_requester_currency
                     if requester_currency != requestee_currency:
                         try:
-
                             response = requests.get(
                                 f"{settings.CURRENCY_SERVICE_URL}{requester_currency}/{requestee_currency}/{amount_requester_currency}",
                                 verify=False
@@ -238,8 +314,11 @@ def respond_to_request(request, request_id):
                     payment_request.status = 'accepted'
                     payment_request.save()
 
-                    messages.success(request,
-                                     f'Payment request accepted and {requestee.profile.get_formatted_balance()[0]}{amount_requestee_currency} sent!')
+                    # Format the amount for display with currency symbol and 2 decimal places
+                    currency_symbol = '£' if requestee_currency == 'GBP' else '$' if requestee_currency == 'USD' else '€' if requestee_currency == 'EUR' else ''
+                    formatted_amount = f"{currency_symbol}{float(amount_requestee_currency):.2f}"
+
+                    messages.success(request, f'Payment request accepted and {formatted_amount} sent!')
 
                 elif action == 'reject':
                     # Update payment request status
@@ -259,7 +338,6 @@ def respond_to_request(request, request_id):
 
     if requester_currency != user_currency:
         try:
-
             response = requests.get(
                 f"{settings.CURRENCY_SERVICE_URL}{requester_currency}/{user_currency}/{requested_amount}",
                 verify=False
@@ -281,12 +359,23 @@ def respond_to_request(request, request_id):
         'payment_request': payment_request
     })
 
-
 @login_required
 def transactions(request):
     """
-    Show user's transaction history
+    Show user's transaction history.
+
+    For admin users, redirects to admin transactions view.
+
+    Args:
+        request: The HTTP request object
+
+    Returns:
+        HttpResponse: Rendered transactions template with context
     """
+    # For admin users, redirect to admin transactions view
+    if request.user.is_staff:
+        return redirect('admin_transactions')
+
     # Get all transactions involving the user
     user_transactions = Transaction.objects.filter(
         Q(sender=request.user) | Q(receiver=request.user)
@@ -300,7 +389,15 @@ def transactions(request):
 @login_required
 def admin_users(request):
     """
-    Admin view to see all user accounts (staff only)
+    Admin view to see all user accounts.
+
+    Displays a list of all users with their account information.
+
+    Args:
+        request: The HTTP request object
+
+    Returns:
+        HttpResponse: Rendered admin users template or redirect if not authorised
     """
     if not request.user.is_staff:
         messages.error(request, 'You do not have permission to access this page.')
@@ -317,7 +414,15 @@ def admin_users(request):
 @login_required
 def admin_transactions(request):
     """
-    Admin view to see all transactions (staff only)
+    Admin view to see all transactions.
+
+    Displays a list of all transactions in the system.
+
+    Args:
+        request: The HTTP request object
+
+    Returns:
+        HttpResponse: Rendered admin transactions template or redirect if not authorised
     """
     if not request.user.is_staff:
         messages.error(request, 'You do not have permission to access this page.')
@@ -334,7 +439,15 @@ def admin_transactions(request):
 @login_required
 def register_admin(request):
     """
-    Handle admin registration (only accessible by staff)
+    Handle admin registration.
+
+    Processes the form submission to create a new administrator account.
+
+    Args:
+        request: The HTTP request object
+
+    Returns:
+        HttpResponse: Rendered form or redirect after successful submission
     """
     if not request.user.is_staff:
         messages.error(request, 'You do not have permission to access this page.')
@@ -347,27 +460,8 @@ def register_admin(request):
                 # Create admin user
                 admin = form.save()
 
-                # Set initial balance same as regular users
-                initial_amount_gbp = 750.00
-                admin_currency = admin.profile.currency
-
-                if admin_currency == 'GBP':
-                    admin.profile.balance = initial_amount_gbp
-                else:
-                    # Convert from GBP to admin's currency
-                    try:
-
-                        response = requests.get(
-                            f"{settings.CURRENCY_SERVICE_URL}GBP/{admin_currency}/{initial_amount_gbp}",
-                            verify=False
-                        )
-                        if response.status_code == 200:
-                            admin.profile.balance = response.json().get('converted_amount', initial_amount_gbp)
-                        else:
-                            admin.profile.balance = initial_amount_gbp
-                    except Exception:
-                        admin.profile.balance = initial_amount_gbp
-
+                # Set initial balance to 0 for admin users
+                admin.profile.balance = 0
                 admin.profile.save()
 
             messages.success(request, f'Admin account has been created!')
