@@ -3,9 +3,20 @@ from django.contrib.auth.models import User
 
 
 class Command(BaseCommand):
+    """
+    Django management command to create an initial admin user if none exists.
+    Creates 'admin1' user with password 'admin1' and appropriate permissions.
+    """
     help = 'Creates initial admin user if no admin exists'
 
     def handle(self, *args, **kwargs):
+        """
+        Execute the command to create an admin user.
+
+        Args:
+            *args: Variable length argument list
+            **kwargs: Arbitrary keyword arguments
+        """
         if not User.objects.filter(is_staff=True).exists():
             try:
                 if not User.objects.filter(username='admin1').exists():

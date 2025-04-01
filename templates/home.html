@@ -5,16 +5,19 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-8">
+        <!-- Main welcome card for the homepage -->
         <div class="card border-primary">
             <div class="card-header bg-primary text-white">
                 <h2 class="card-title mb-0">Welcome to PayApp</h2>
             </div>
             <div class="card-body">
+                <!-- Application tagline and description -->
                 <div class="text-center mb-4">
                     <h3>A simple and secure way to send and request money</h3>
                     <p class="lead">PayApp is a simplified version of PayPal where you can easily manage your money online.</p>
                 </div>
 
+                <!-- Feature highlights section with icons -->
                 <div class="row mb-4">
                     <div class="col-md-4 text-center">
                         <div class="card h-100">
@@ -45,10 +48,13 @@
                     </div>
                 </div>
 
+                <!-- Call to action buttons -->
                 <div class="text-center">
                     {% if user.is_authenticated %}
+                    <!-- For logged-in users, show dashboard button -->
                     <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">Go to Dashboard</a>
                     {% else %}
+                    <!-- For visitors, show register and login buttons -->
                     <a href="{% url 'register' %}" class="btn btn-primary btn-lg me-2">Register</a>
                     <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg">Login</a>
                     {% endif %}

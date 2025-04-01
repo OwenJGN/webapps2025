@@ -6,11 +6,13 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-8">
+        <!-- Payment form card -->
         <div class="card">
             <div class="card-header bg-primary text-white">
                 <h2 class="card-title mb-0">Send Money</h2>
             </div>
             <div class="card-body">
+                <!-- User balance and currency information -->
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <div class="info-card alert-permanent">
@@ -26,6 +28,7 @@
                     </div>
                 </div>
 
+                <!-- Payment details form -->
                 <form method="POST">
                     {% csrf_token %}
                     <fieldset class="mb-4">
@@ -38,6 +41,7 @@
                     </div>
                 </form>
             </div>
+            <!-- Information footer about payment processing -->
             <div class="card-footer bg-light">
                 <div class="text-muted">
                     <p class="mb-0"><strong>Note:</strong> Payments are processed instantly. Currency conversion will be applied automatically if the recipient uses a different currency.</p>

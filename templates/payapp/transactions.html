@@ -5,11 +5,13 @@
 {% block content %}
 <div class="row">
     <div class="col-md-12 mb-4">
+        <!-- Transaction history card -->
         <div class="card">
             <div class="card-header bg-primary text-white">
                 <h2 class="card-title mb-0">Transaction History</h2>
             </div>
             <div class="card-body">
+                <!-- User balance and quick actions section -->
                 <div class="alert alert-info">
                     <div class="row">
                         <div class="col-md-4">
@@ -27,6 +29,7 @@
                 </div>
 
                 {% if transactions %}
+                <!-- Table of all user transactions -->
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
                         <thead>
@@ -50,6 +53,7 @@
                                     {% endif %}
                                 </td>
                                 <td>
+                                    <!-- Different display based on if user is sender or receiver -->
                                     {% if transaction.sender == user %}
                                         <span class="text-danger">Sent to {{ transaction.receiver.username }}</span>
                                     {% else %}
@@ -66,6 +70,7 @@
                                         {{ transaction.get_receiver_amount_display }}
                                     {% endif %}
                                 </td>
+                                <!-- Color-coded balance impact: red for outgoing, green for incoming -->
                                 <td class="{% if transaction.sender == user %}text-danger{% else %}text-success{% endif %}">
                                     {% if transaction.sender == user %}
                                         -{{ transaction.get_sender_amount_display }}
@@ -79,6 +84,7 @@
                     </table>
                 </div>
                 {% else %}
+                <!-- Message for users with no transactions -->
                 <div class="alert alert-secondary">
                     <p class="mb-0">You don't have any transactions yet. Start by sending or requesting money!</p>
                 </div>
