@@ -16,7 +16,6 @@ class UserProfile(models.Model):
         ('GBP', 'GB Pounds (£)'),
         ('USD', 'US Dollars ($)'),
         ('EUR', 'Euros (€)'),
-        ('', 'No Currency (Admin)'),
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
